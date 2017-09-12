@@ -9,7 +9,7 @@ import pefile
 import struct
 import os
 import string
-import yara_signature
+from . import yara_signature
 import hashlib
 
 class YaraPEGenerator:
@@ -506,7 +506,7 @@ class YaraPEGenerator:
                 header.append("????????")
                 header.append("????????")
 
-            for key, value in values.iteritems():
+            for key, value in values.items():
                 if key == 'magic': header[0] = value[0:4]
                 if key == 'major linker version': header[1] = value[0:2]
                 if key == 'minor linker version': header[2] = value[0:2]
@@ -589,7 +589,7 @@ class YaraPEGenerator:
             for entry in self.__pe.FileInfo:
                 if hasattr(entry, 'StringTable'):
                     for st_entry in entry.StringTable:
-                        for key, entry in st_entry.entries.items():
+                        for key, entry in list(st_entry.entries.items()):
                             info = []
                             for i in key:
                                 info.append(hex(ord(i))[2:].zfill(2))

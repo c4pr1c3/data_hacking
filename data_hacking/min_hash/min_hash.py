@@ -32,7 +32,7 @@ class MinHash():
         self._lsh_rows = lsh_rows
         self._hash_salt = []
         self._bin_limit = bin_limit
-        for i in xrange(num_hashes):
+        for i in range(num_hashes):
             self._hash_salt.append(str(int(random.random()*100)))
 
         # Storage for candidate buckets
@@ -88,14 +88,14 @@ class MinHash():
 
         # Make sure the attributes are coming in the right way
         if not isinstance(attribute_list, list):
-            print 'Min_hash.addinstance() : Attributes must be in a list!'
-            print type(attribute_list)
-            print 'Ignoring...'
+            print('Min_hash.addinstance() : Attributes must be in a list!')
+            print(type(attribute_list))
+            print('Ignoring...')
             return
-        if not all(isinstance(x,str) or isinstance(x,unicode) for x in attribute_list):
-            print 'Min_hash.addinstance() : All attributes must be of str or unicode type!'
-            print attribute_list
-            print 'Ignoring...'
+        if not all(isinstance(x,str) or isinstance(x,str) for x in attribute_list):
+            print('Min_hash.addinstance() : All attributes must be of str or unicode type!')
+            print(attribute_list)
+            print('Ignoring...')
             return
 
         # Drop duplicates?
@@ -130,7 +130,7 @@ class MinHash():
 
         # Getting matches from Hash Buckets
         _candidate_matches = set()
-        for y_index in xrange(0, sig_width, rows):
+        for y_index in range(0, sig_width, rows):
             candidate_list = self._candidate_buckets[y_index][self._hash_list_as_string(minhash_sig[y_index:y_index+rows])]
             for match in candidate_list:
                 _candidate_matches.add(match)
@@ -169,7 +169,7 @@ class MinHash():
 
     def _minhash_hash(self, salt, v_list):
         ''' Compute a hash value for the list of values, the 'salt' is a random permutation factor '''
-        minhash = sys.maxint
+        minhash = sys.maxsize
         for value in v_list:
             h_value = unpack('<IIII', hashlib.md5(value+salt).digest())[0]
             if (h_value < minhash):
@@ -189,7 +189,7 @@ class MinHash():
         rows = self._lsh_rows
         sig_width = bands*rows
 
-        for y_index in xrange(0, sig_width, rows):
+        for y_index in range(0, sig_width, rows):
 
             # Fixme: not totally sure what to do as these buckets get really big
             hash_key = self._hash_list_as_string(minhash_sig[y_index:y_index+rows])
@@ -200,12 +200,12 @@ class MinHash():
 
         # Linear pass to collapse candidate pairs (the buckets will have repeats)
         self.vprint('\t\tCollapsing Candidate Pairs...')
-        for _key, subdict in self._candidate_buckets.iteritems():
-            for __key, candidate_list in subdict.iteritems():
+        for _key, subdict in self._candidate_buckets.items():
+            for __key, candidate_list in subdict.items():
 
                 # Sanity check
                 if (len(candidate_list) > self._bin_limit):
-                    print 'Hashing function issue, key: (%s,%s) has %d items in it out of %s slots' % (_key, __key, len(candidate_list), self._bin_limit)
+                    print('Hashing function issue, key: (%s,%s) has %d items in it out of %s slots' % (_key, __key, len(candidate_list), self._bin_limit))
                     candidate_list = candidate_list[:self._bin_limit]
 
                 for source in candidate_list:
@@ -226,7 +226,7 @@ class MinHash():
         model_path = os.path.join(model_dir, name+'.model')
 
         # Now store it to disk
-        print 'Storing Serialized Model to Disk (%s:%.2fMeg)' % (name, len(serialized_model)/1024.0/1024.0)
+        print('Storing Serialized Model to Disk (%s:%.2fMeg)' % (name, len(serialized_model)/1024.0/1024.0))
         open(model_path,'wb').write(serialized_model)
 
     def _load_model_from_disk(self, name, model_dir):
@@ -239,7 +239,7 @@ class MinHash():
         try:
             model = pickle.loads(open(model_path,'rb').read())
         except:
-            print 'Could not load model: %s from directory %s!' % (name, model_path)
+            print('Could not load model: %s from directory %s!' % (name, model_path))
             sys.exit(1)
 
         return model
@@ -261,10 +261,10 @@ def _test():
     my_min.compute_all_candidate_matches()
     pairs = my_min.get_candidate_pairs()
 
-    print 'All candidate pairs'
+    print('All candidate pairs')
     pprint.pprint(pairs)
 
-    print 'Query on [x,y,z,h]'
+    print('Query on [x,y,z,h]')
     matches = my_min.candidate_query(['x','y','z','h'])
     pprint.pprint(matches)
 

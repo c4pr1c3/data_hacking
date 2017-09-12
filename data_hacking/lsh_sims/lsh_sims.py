@@ -53,11 +53,11 @@ class LSHSimilarities():
                 self._record_type = 'series'
                 self._get_row = lambda index: self._records.iloc[index]
             else:
-                print 'A Series must be a series of lists'
-                print 'instead got a series of %s' % type(records.iloc[0])
+                print('A Series must be a series of lists')
+                print('instead got a series of %s' % type(records.iloc[0]))
                 sys.exit(1)
         else:
-            print 'Unknown records type for LSHSimilarities(): %s' % type(records)
+            print('Unknown records type for LSHSimilarities(): %s' % type(records))
             sys.exit(1)
 
         # Store a handle to the records
@@ -95,7 +95,7 @@ class LSHSimilarities():
             for uuid, record in enumerate(self._records):
                 self._min_hash.add_instance(uuid, record)
         else:
-            for uuid in xrange(self._records.shape[0]):
+            for uuid in range(self._records.shape[0]):
                 self._min_hash.add_instance(uuid, self._get_row(uuid))
 
         # Build up the min hash signatures
@@ -167,7 +167,7 @@ class LSHSimilarities():
 
             # Catch unknown distance metric
             else:
-                print 'Unknown distance metric', distance_metric
+                print('Unknown distance metric', distance_metric)
                 raise NotImplementedError
 
         self.vprint('LSH: %s matches out of %s candidates (adjust parameters if needed)' % (len(matches), len(candidates)))
@@ -189,7 +189,7 @@ class LSHSimilarities():
         # Output warning if candidates too high
         n_pairs = len(candidates)
         if (n_pairs > 5000):
-            print 'Warning: %d candidates returned from MinHash' % n_pairs
+            print('Warning: %d candidates returned from MinHash' % n_pairs)
 
         # Now process all the candidates events pairs and explicity
         # compute similarities based on the specified distance metric
@@ -210,10 +210,10 @@ class LSHSimilarities():
 
             # Catch unknown distance metric
             else:
-                print 'Unknown distance metric', distance_metric
+                print('Unknown distance metric', distance_metric)
                 raise NotImplementedError
         if (n_pairs > 5000):
-            print 'LSH: %s matches out of %s candidates (adjust parameters if needed)' % (len(matches), n_pairs)
+            print('LSH: %s matches out of %s candidates (adjust parameters if needed)' % (len(matches), n_pairs))
 
         # Return the matches list
         return matches
@@ -260,10 +260,10 @@ class LSHSimilarities():
             Note: This is based on a code snippet from Michael Homer
                   http://mwh.geek.nz/2009/04/26/python-damerau-levenshtein-distance '''
         oneago = None
-        thisrow = range(1, len(seq2) + 1) + [0]
-        for x in xrange(len(seq1)):
+        thisrow = list(range(1, len(seq2) + 1)) + [0]
+        for x in range(len(seq1)):
             _twoago, oneago, thisrow = oneago, thisrow, [0] * len(seq2) + [x + 1]
-            for y in xrange(len(seq2)):
+            for y in range(len(seq2)):
                 delcost = oneago[y] + 1
                 addcost = thisrow[y - 1] + 1
                 subcost = oneago[y - 1] + (seq1[x] != seq2[y])
@@ -283,10 +283,10 @@ class LSHSimilarities():
             with a taper of costs as you progress down the sequence '''
         max_len = float(max(len(seq1), len(seq2)))
         oneago = None
-        thisrow = range(1, len(seq2) + 1) + [0]
-        for x in xrange(len(seq1)):
+        thisrow = list(range(1, len(seq2) + 1)) + [0]
+        for x in range(len(seq1)):
             _twoago, oneago, thisrow = oneago, thisrow, [0] * len(seq2) + [x + 1]
-            for y in xrange(len(seq2)):
+            for y in range(len(seq2)):
                 taper = 1.0 - min(x, y) / max_len
                 delcost = oneago[y] + taper
                 addcost = thisrow[y - 1] + taper
@@ -324,16 +324,16 @@ def _test():
     lsh = LSHSimilarities(my_data, mh_params=params)
     sims = lsh.batch_compute_similarities(distance_metric='l_tapered_sim', threshold=0)
 
-    print 'All similarity pairs'
+    print('All similarity pairs')
     sims.sort(key=lambda x: x[0], reverse=True)
     for sim in sims:
-        print '(%f)\n%s\n%s\n' % (sim[0], my_data[sim[1]], my_data[sim[2]])
+        print('(%f)\n%s\n%s\n' % (sim[0], my_data[sim[1]], my_data[sim[2]]))
 
-    print 'Query on [x,y,z,h]'
+    print('Query on [x,y,z,h]')
     matches = lsh.similarity_query(['x','y','z','h'])
     pprint.pprint(matches)
 
-    print 'Top 5 on [x,y,z,h]'
+    print('Top 5 on [x,y,z,h]')
     top_5 = lsh.top_N(['x','y','z','h'], my_data, 5)
     pprint.pprint(top_5)
 

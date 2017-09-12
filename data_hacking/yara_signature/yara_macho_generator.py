@@ -11,7 +11,7 @@ import os
 import re
 import string
 import hashlib
-import yara_signature
+from . import yara_signature
 
 class YaraMachoGenerator:
     """
@@ -92,7 +92,7 @@ class YaraMachoGenerator:
                             self.__sig.add_named_hex(load_cmd.get_cmd_name() + "_" + str(self.__dyld_count), cmd_bytes + cmd_size)
                         self.__dyld_count += 1
                 except Exception as e:
-                    print "EXCEPTION: %s" % str(e)
+                    print("EXCEPTION: %s" % str(e))
 
 
     def add_segment(self, symbols=[]):
@@ -137,7 +137,7 @@ class YaraMachoGenerator:
                             self.__sig.add_named_hex(load_cmd.get_cmd_name() + "_" + str(self.__dyld_count), cmd_bytes + cmd_size)
                         self.__dyld_count += 1
                 except Exception as e:
-                    print "EXCEPTION: %s" % str(e)
+                    print("EXCEPTION: %s" % str(e))
 
 
     def add_symtab(self, symbols=[]):
@@ -169,7 +169,7 @@ class YaraMachoGenerator:
                             self.__sig.add_named_hex(load_cmd.get_cmd_name() + "_" + str(self.__dyld_count), cmd_bytes + cmd_size)
                         self.__dyld_count += 1
                 except Exception as e:
-                    print "EXCEPTION: %s" % str(e)
+                    print("EXCEPTION: %s" % str(e))
 
 
     def add_dyld_info(self, symbols=[]):
@@ -207,7 +207,7 @@ class YaraMachoGenerator:
                             self.__sig.add_named_hex(load_cmd.get_cmd_name() + "_" + str(self.__dyld_count), cmd_bytes + cmd_size)
                         self.__dyld_count += 1
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
 
 
     def add_dysymtab(self, symbols=[]):
@@ -253,7 +253,7 @@ class YaraMachoGenerator:
                             self.__sig.add_named_hex(load_cmd.get_cmd_name() + "_" + str(self.__dyld_count), cmd_bytes + cmd_size)
                         self.__dyld_count += 1
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
 
 
     def add_lc(self, lc_name):
@@ -271,7 +271,7 @@ class YaraMachoGenerator:
                         self.__sig.add_named_hex(load_cmd.get_cmd_name() + "_" + str(self.__dyld_count), cmd_bytes + "??000000")
                         self.__dyld_count += 1
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
 
 
     def add_lc_count(self, lc_name, count, size=-1):
@@ -293,7 +293,7 @@ class YaraMachoGenerator:
                         self.__dyld_count += 1
                         break
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
 
 
     def add_headers(self):
@@ -333,7 +333,7 @@ class YaraMachoGenerator:
                     if load_cmd.get_cmd_name() == 'LC_SYMTAB':
                         self.__symbol_table_strings.extend(cmd_data.strip('\x00').split('\x00'))
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
         self.__symbol_table_strings = [x for x in self.__symbol_table_strings if not re.search(r"[\s\"\\]", x) and len(x) > 5  and all(c in string.printable for c in x)]
         self.__sig.add_named_string_group("symboltable", set(self.__symbol_table_strings))
 
@@ -352,7 +352,7 @@ class YaraMachoGenerator:
                                 if 'flags' in sd_info and 'type' in sd_info['flags'] and sd_info['flags']['type'] == 'S_CSTRING_LITERALS':
                                     self.__const_strings.extend(section_data.section_data.split('\0'))
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
         self.__const_strings = [x for x in self.__const_strings if not re.search(r"[\s\"\\]", x) and len(x) > 5  and all(c in string.printable for c in x)]
         self.__sig.set_const_pool(set(self.__const_strings))
 
@@ -378,7 +378,7 @@ class YaraMachoGenerator:
                                 data = sectname.encode("hex") + nulls + segname.encode("hex")
                                 sections[sectname+"_"+segname] = data
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
         for sec in sections:
             self.__sig.add_named_hex(sec, sections[sec])
 
@@ -398,7 +398,7 @@ class YaraMachoGenerator:
                         minorv = struct.pack(self.__byte_order(header) + 'B', int(versions[1])).encode('hex')
                         self.__sig.add_named_hex('LC_VERSION_MIN_MACOSX', cmd_bytes + "10000000??" + minorv + maxv + "00")
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
 
 
     def get_signature(self, writesig=False, filename=''):

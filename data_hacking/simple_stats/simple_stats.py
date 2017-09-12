@@ -73,7 +73,7 @@ class GTest():
         if N > 0:
             topN = series_a.value_counts().head(N).index.tolist()
             drop = []
-            for i, row in series_a.iteritems():
+            for i, row in series_a.items():
                 if row not in topN:
                     drop.append(i)
 
@@ -81,8 +81,8 @@ class GTest():
             # both in sync for building the contingency table below.
             series_a = series_a.drop(drop)
             series_b = series_b.drop(drop)
-            series_a.index = range(len(series_a))
-            series_b.index = range(len(series_b))
+            series_a.index = list(range(len(series_a)))
+            series_b.index = list(range(len(series_b)))
 
         mar_dist_a = series_a.value_counts().astype(float)  # Marginal distibution of A
         mar_dist_b = series_b.value_counts().astype(float)  # Marginal distibution of B
@@ -102,7 +102,7 @@ class GTest():
         # Create a dataframe
         # A dataframe with keys from series_a as the index, series_b_keys
         # as the columns and the counts as the values.
-        dataframe = pd.DataFrame(cont_table.values(), index=cont_table.keys())
+        dataframe = pd.DataFrame(list(cont_table.values()), index=list(cont_table.keys()))
         dataframe.fillna(0, inplace=True)
 
         # Added support for matches back in. With this the dataframe will have at most matches * N cols
@@ -158,9 +158,9 @@ def _test():
     # Looking for correlations between sql names and status
     g_test = GTest()
     names, match_list, df = g_test.highest_gtest_scores(dataframe['name'], dataframe['status'], N=5)
-    print '\n<<< Names with highest correlation to status >>>'
-    pprint.pprint(zip(names, match_list))
-    print df
+    print('\n<<< Names with highest correlation to status >>>')
+    pprint.pprint(list(zip(names, match_list)))
+    print(df)
 
 if __name__ == "__main__":
     _test()

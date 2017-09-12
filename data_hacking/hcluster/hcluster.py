@@ -42,11 +42,11 @@ class HCluster():
                 self._record_type = 'series'
                 self._get_row = lambda index: self._records.iloc[index]
             else:
-                print 'A Series must be a series of lists'
-                print 'instead got a series of %s' % type(records.iloc[0])
+                print('A Series must be a series of lists')
+                print('instead got a series of %s' % type(records.iloc[0]))
                 exit(1)
         else:
-            print 'Unknown records type for LSHSimilarities(): %s' % type(records)
+            print('Unknown records type for LSHSimilarities(): %s' % type(records))
             exit(1)
 
         # Store a handle to the records
@@ -88,7 +88,7 @@ class HCluster():
             for record in self._records:
                 labels.append(':'.join(record))
         else:
-            for uuid in xrange(self._records.shape[0]):
+            for uuid in range(self._records.shape[0]):
                 labels.append(':'.join(self._get_row(uuid)))
 
 
@@ -166,8 +166,8 @@ class HCluster():
 
         # Sanity check
         if (graph.number_of_nodes() == 0):
-            print '<<<< WTF Error: Looks like an empty graph >>>>>'
-            print 'Graph %d nodes %d edges' % (graph.number_of_nodes(), graph.number_of_edges())
+            print('<<<< WTF Error: Looks like an empty graph >>>>>')
+            print('Graph %d nodes %d edges' % (graph.number_of_nodes(), graph.number_of_edges()))
             return None, None
 
         # Return both the graph and the root
@@ -308,11 +308,11 @@ class HCluster():
         return str(self.common_features(G, root))
 
     def graph_info(self, G):
-        print G
-        print G.graph
-        print "Number of Nodes:", G.number_of_nodes()
-        print "Number of Edges:", G.number_of_edges()
-        print "Connected:", nx.is_strongly_connected(G)
+        print(G)
+        print(G.graph)
+        print("Number of Nodes:", G.number_of_nodes())
+        print("Number of Edges:", G.number_of_edges())
+        print("Connected:", nx.is_strongly_connected(G))
 
     def plot_htree(self, h_tree, prog='neato', node_size=1500, figsize=(12,6)):
 
@@ -323,7 +323,7 @@ class HCluster():
             labels[node[0]] = node[1]['label']
 
         # Find the root
-        root_node = [n for n,d in h_tree.in_degree().items() if d==0][0]
+        root_node = [n for n,d in list(h_tree.in_degree().items()) if d==0][0]
 
         # Tree layout
         pos = nx.graphviz_layout(h_tree, root=root_node, prog=prog)
@@ -358,14 +358,14 @@ def _test():
     lsh = lsh_sims.LSHSimilarities(my_data, mh_params=params)
     sims = lsh.batch_compute_similarities(distance_metric='jaccard', threshold=.01)
 
-    print 'All similarity pairs'
+    print('All similarity pairs')
     pprint.pprint(sims)
 
-    print 'Query on [x,y,z,h]'
+    print('Query on [x,y,z,h]')
     matches = lsh.similarity_query(['x','y','z','h'])
     pprint.pprint(matches)
 
-    print 'Top 5 on [x,y,z,h]'
+    print('Top 5 on [x,y,z,h]')
     top_5 = lsh.top_N(['x','y','z','h'], my_data, 5)
     pprint.pprint(top_5)
 

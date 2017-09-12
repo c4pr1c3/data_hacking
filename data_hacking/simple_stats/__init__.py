@@ -1,2 +1,2 @@
 '''Package for the Simple Statistical Functionality'''
-from simple_stats import *
+from .simple_stats import *
